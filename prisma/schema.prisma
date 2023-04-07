@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String @id @default(uuid())
+  name         String @db.VarChar(255)
+  balRegular   Int @default(0)
+  balPremium   Int @default(0)
+  createdAt    DateTime @default(now())
+  farm         Farm?
+  shop         Shop?
+}
+
+model Farm {
+  id        String @id @default(uuid())
+  ownerId   String @unique
+  owner     User @relation(fields: [ownerId], references: [id])
+  createdAt DateTime @default(now())
+  plots     Plot[]
+  items     FarmItem[]
+}
+
+model Plot {
+  id     Int    @id @default(autoincrement())
+  x      Int
+  y      Int
+  farmId String
+  farm   Farm   @relation(fields: [farmId], references: [id])
+  crop   Crop?
+}
+
+model Seed {
+  id         String @id
+  growthTime Int
+}
+
+model FarmItem {
+  id       Int @id @default(autoincrement())
+  quantity Int
+  itemId   String
+  type     ItemType
+  farmId   String
+  farm     Farm   @relation(fields: [farmId], references: [id])
+}
+
+model Crop {
+  id           Int       @id @default(autoincrement())
+  seedId       String
+  stage        Int       @default(0)
+  plantedAt    DateTime  @default(now())
+  nextStageAt  DateTime
+  wateredUntil DateTime?
+  plotId       Int  @unique
+  plot         Plot @relation(fields: [plotId], references: [id])
+}
+
+model Shop {
+  id      String      @id @default(uuid())
+  ownerId String?     @unique
+  owner   User?       @relation(fields: [ownerId], references: [id])
+  items   ShopItems[]
+}
+
+model ShopItems {
+  id           Int      @id @default(autoincrement())
+  itemId       String
+  type         ItemType
+  priceRegular Int
+  pricePremium Int
+  shopId       String
+  shop         Shop     @relation(fields: [shopId], references: [id])
+}
+
+enum ItemType {
+  SEED
+}

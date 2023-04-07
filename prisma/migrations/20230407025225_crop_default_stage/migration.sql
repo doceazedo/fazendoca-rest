@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Crop" ALTER COLUMN "stage" SET DEFAULT 0;
