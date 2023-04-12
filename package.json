@@ -35,7 +35,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@prisma/client": "^4.12.0"
+		"@prisma/client": "^4.12.0",
+		"zod": "^3.21.4"
 	},
 	"prisma": {
 		"seed": "vite-node prisma/seed.ts"

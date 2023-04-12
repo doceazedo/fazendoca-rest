@@ -1,16 +1,16 @@
+import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/db';
 import { EMPTY_UUID, STAGES } from '$lib/helpers';
+import { parseRequest } from '$lib/utils';
 
-type RequestData = {
-  plotId: number;
-  farmItem: number;
-}
+const RequestData = z.object({
+  plotId: z.number().int().positive(),
+  farmItem: z.number().int().positive(),
+});
 
 export const POST = async ({ request }) => {
-  const data = await request.json() as RequestData;
-
-  // TODO: zod
+  const data = await parseRequest(request, RequestData);
 
   const plot = await prisma.plot.findUnique({
     where: {
