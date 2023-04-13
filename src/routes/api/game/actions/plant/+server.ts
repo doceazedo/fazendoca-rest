@@ -1,16 +1,16 @@
+import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/db';
-import { EMPTY_UUID, STAGES } from '$lib/helpers';
+import { EMPTY_UUID } from '$lib/helpers';
+import { parseRequest } from '$lib/utils';
 
-type RequestData = {
-  plotId: number;
-  farmItem: number;
-}
+const RequestData = z.object({
+  plotId: z.number().int().positive(),
+  farmItem: z.number().int().positive(),
+});
 
 export const POST = async ({ request }) => {
-  const data = await request.json() as RequestData;
-
-  // TODO: zod
+  const data = await parseRequest(request, RequestData);
 
   const plot = await prisma.plot.findUnique({
     where: {
@@ -38,12 +38,12 @@ export const POST = async ({ request }) => {
       id: farmItem.itemId
     }
   });
-  if (!seed) throw error(404, 'seed not found');
+  if (!seed) throw error(500, 'seed data not found');
 
   const crop = await prisma.crop.create({
     data: {
       seedId: seed.id,
-      nextStageAt: new Date(Date.now() + (seed.growthTime / STAGES)),
+      readyAt: new Date(Date.now() + seed.growthTime),
       plotId: plot.id
     }
   });

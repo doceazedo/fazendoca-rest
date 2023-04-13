@@ -38,9 +38,18 @@ model Plot {
   crop   Crop?
 }
 
+model Plant {
+  id        String @id
+  sellPrice Int
+  seed      Seed?
+}
+
 model Seed {
-  id         String @id
-  growthTime Int
+  id           String @id
+  growthTime   Int
+  lootQuantity Int
+  plantId      String @unique
+  plant        Plant @relation(fields: [plantId], references: [id])
 }
 
 model FarmItem {
@@ -55,12 +64,11 @@ model FarmItem {
 model Crop {
   id           Int       @id @default(autoincrement())
   seedId       String
-  stage        Int       @default(0)
   plantedAt    DateTime  @default(now())
-  nextStageAt  DateTime
+  readyAt      DateTime
   wateredUntil DateTime?
-  plotId       Int  @unique
-  plot         Plot @relation(fields: [plotId], references: [id])
+  plotId       Int       @unique
+  plot         Plot      @relation(fields: [plotId], references: [id])
 }
 
 model Shop {
@@ -82,4 +90,5 @@ model ShopItems {
 
 enum ItemType {
   SEED
+  PLANT
 }
