@@ -9,7 +9,10 @@ export const GET = async () => {
     },
     include: {
       plots: {
-        include: {
+        select: {
+          id: true,
+          x: true,
+          y: true,
           crop: true
         }
       }

@@ -22,14 +22,16 @@ export const POST = async ({ request }) => {
   });
   if (occupiedPlot) throw error(400, 'this plot is not empty');
 
-  const plot = await prisma.plot.create({
+  const createdPlot = await prisma.plot.create({
     data: {
       x: data.x,
       y: data.y,
       farmId: EMPTY_UUID
     }
   });
-  if (!plot) throw error(500, 'plot not created');
+  if (!createdPlot) throw error(500, 'plot not created');
+  
+  const { farmId, ...plot } = createdPlot;
 
   return json({ plot });
 }
