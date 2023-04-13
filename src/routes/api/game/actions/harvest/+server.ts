@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/db';
-import { EMPTY_UUID } from '$lib/helpers';
-import { giveItems, parseRequest } from '$lib/utils';
+import { getPlotWithCrop, giveItems, parseRequest } from '$lib/utils';
 
 const RequestData = z.object({
   plotId: z.number().int().positive(),
@@ -10,19 +9,8 @@ const RequestData = z.object({
 
 export const POST = async ({ request }) => {
   const data = await parseRequest(request, RequestData);
-
-  const plot = await prisma.plot.findUnique({
-    where: {
-      id: data.plotId
-    },
-    include: {
-      farm: true,
-      crop: true
-    }
-  });
-  if (!plot) throw error(404, 'plot not found');
-  if (plot.farm.ownerId !== EMPTY_UUID) throw error(401, 'not your farm');
-  if (!plot.crop) throw error(400, 'cannot harvest empty plot');
+  
+  const plot = await getPlotWithCrop(data.plotId);
   if (plot.crop.readyAt > new Date()) throw error(400, 'crop is not ready');
 
   const seed = await prisma.seed.findUnique({
