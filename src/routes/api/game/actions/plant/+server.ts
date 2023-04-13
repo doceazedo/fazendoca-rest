@@ -43,7 +43,7 @@ export const POST = async ({ request }) => {
   const crop = await prisma.crop.create({
     data: {
       seedId: seed.id,
-      nextStageAt: new Date(Date.now() + (seed.growthTime / STAGES)),
+      readyAt: new Date(Date.now() + seed.growthTime),
       plotId: plot.id
     }
   });

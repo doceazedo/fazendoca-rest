@@ -55,9 +55,8 @@ model FarmItem {
 model Crop {
   id           Int       @id @default(autoincrement())
   seedId       String
-  stage        Int       @default(0)
   plantedAt    DateTime  @default(now())
-  nextStageAt  DateTime
+  readyAt      DateTime
   wateredUntil DateTime?
   plotId       Int  @unique
   plot         Plot @relation(fields: [plotId], references: [id])
