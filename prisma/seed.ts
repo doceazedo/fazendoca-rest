@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { DEFAULT_ID, EMPTY_UUID, RADISH_SLUG } from '../src/lib/helpers';
+import { EMPTY_UUID, RADISH_SEED_SLUG, RADISH_SLUG } from '../src/lib/helpers';
 
 const prisma = new PrismaClient();
 
@@ -24,21 +24,32 @@ const main = async () => {
     }
   });
 
-  const plant = await prisma.seed.upsert({
-    where: { id: RADISH_SLUG },
+  const seed = await prisma.seed.upsert({
+    where: { id: RADISH_SEED_SLUG },
     update: {},
     create: {
-      id: RADISH_SLUG,
-      growthTime: 10000
+      id: RADISH_SEED_SLUG,
+      lootQuantity: 4,
+      growthTime: 10000,
+      plant: {
+        create: {
+          id: RADISH_SLUG,
+          sellPrice: 40
+        }
+      }
     }
   });
 
-  const inventoryRadishes = await prisma.farmItem.upsert({
-    where: { id: DEFAULT_ID },
-    update: {},
-    create: {
-      id: DEFAULT_ID,
-      itemId: RADISH_SLUG,
+  const exisitingRadishInInventory = await prisma.farmItem.findFirst({
+    where: {
+      itemId: RADISH_SEED_SLUG,
+      farmId: farm.id
+    }
+  })
+
+  if (!exisitingRadishInInventory) await prisma.farmItem.create({
+    data: {
+      itemId: RADISH_SEED_SLUG,
       type: 'SEED',
       quantity: 64,
       farmId: farm.id

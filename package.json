@@ -11,7 +11,9 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"dev:db": "docker run -p 5432:5432 -v /tmp/database:/var/lib/postgresql/data -e POSTGRES_PASSWORD=1234 -d postgres"
+		"db:start": "docker run -p 5432:5432 -v /tmp/database:/var/lib/postgresql/data -e POSTGRES_PASSWORD=1234 -d postgres",
+		"db:deploy": "prisma migrate deploy && prisma db seed",
+		"db:recreate": "rm -rf /tmp/database && npm run db:start"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",

@@ -38,7 +38,7 @@ export const POST = async ({ request }) => {
       id: farmItem.itemId
     }
   });
-  if (!seed) throw error(404, 'seed not found');
+  if (!seed) throw error(500, 'seed data not found');
 
   const crop = await prisma.crop.create({
     data: {
