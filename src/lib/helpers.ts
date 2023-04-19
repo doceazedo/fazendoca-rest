@@ -1,3 +1,4 @@
+export const DEFAULT_SHOP_ID = 'DEFAULT';
 export const EMPTY_UUID = '00000000-0000-0000-0000-000000000000';
 export const RADISH_SLUG = 'RADISH';
 export const RADISH_SEED_SLUG = 'RADISH_SEED';

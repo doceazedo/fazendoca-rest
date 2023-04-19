@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { EMPTY_UUID, RADISH_SEED_SLUG, RADISH_SLUG } from '../src/lib/helpers';
+import { DEFAULT_SHOP_ID, EMPTY_UUID, RADISH_SEED_SLUG, RADISH_SLUG } from '../src/lib/helpers';
 
 const prisma = new PrismaClient();
 
@@ -53,6 +53,24 @@ const main = async () => {
       type: 'SEED',
       quantity: 64,
       farmId: farm.id
+    }
+  });
+
+  await prisma.shop.upsert({
+    where: {
+      id: DEFAULT_SHOP_ID
+    },
+    update: {},
+    create: {
+      id: DEFAULT_SHOP_ID,
+      items: {
+        create: {
+          itemId: RADISH_SEED_SLUG,
+          type: 'SEED',
+          priceRegular: 100,
+          pricePremium: 20,
+        }
+      }
     }
   });
 }

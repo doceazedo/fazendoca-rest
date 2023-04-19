@@ -1,14 +1,7 @@
 import { error } from "@sveltejs/kit";
 import type { ZodObject, ZodRawShape } from "zod";
 
-export const parseRequest = async <T extends ZodRawShape>(request: Request, schema: ZodObject<T>) => {
-  let payload: unknown;
-  try {
-    payload = await request.json();
-  } catch (e) {
-    throw error(400, 'Invalid JSON');
-  }
-
+export const parseData  = async <T extends ZodRawShape>(payload: unknown, schema: ZodObject<T>) => {
   const parsedData = schema.safeParse(payload);
 
   if (!parsedData.success) {
@@ -17,4 +10,15 @@ export const parseRequest = async <T extends ZodRawShape>(request: Request, sche
   }
 
   return parsedData.data;
+}
+
+export const parseRequest = async <T extends ZodRawShape>(request: Request, schema: ZodObject<T>) => {
+  let payload: unknown;
+  try {
+    payload = await request.json();
+  } catch (e) {
+    throw error(400, 'Invalid JSON');
+  }
+
+  return parseData(payload, schema);
 }

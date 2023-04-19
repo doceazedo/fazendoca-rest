@@ -17,7 +17,6 @@ model User {
   balPremium   Int @default(0)
   createdAt    DateTime @default(now())
   farm         Farm?
-  shop         Shop?
   xp           Int @default(1)
 }
 
@@ -28,6 +27,7 @@ model Farm {
   createdAt DateTime @default(now())
   plots     Plot[]
   items     FarmItem[]
+  shop      Shop?
 }
 
 model Plot {
@@ -74,8 +74,8 @@ model Crop {
 
 model Shop {
   id      String      @id @default(uuid())
-  ownerId String?     @unique
-  owner   User?       @relation(fields: [ownerId], references: [id])
+  farmId  String?     @unique
+  farm    Farm?       @relation(fields: [farmId], references: [id])
   items   ShopItems[]
 }
 
@@ -83,8 +83,8 @@ model ShopItems {
   id           Int      @id @default(autoincrement())
   itemId       String
   type         ItemType
-  priceRegular Int
-  pricePremium Int
+  priceRegular Int?
+  pricePremium Int?
   shopId       String
   shop         Shop     @relation(fields: [shopId], references: [id])
 }
