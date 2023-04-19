@@ -69,7 +69,7 @@ model Crop {
   readyAt      DateTime
   wateredUntil DateTime?
   plotId       Int       @unique
-  plot         Plot      @relation(fields: [plotId], references: [id])
+  plot         Plot      @relation(fields: [plotId], references: [id], onDelete: Cascade)
 }
 
 model Shop {
