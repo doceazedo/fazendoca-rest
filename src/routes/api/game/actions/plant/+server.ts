@@ -2,12 +2,14 @@ import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/db';
 import { EMPTY_UUID } from '$lib/helpers';
-import { parseRequest } from '$lib/utils';
+import { giveXP, parseRequest } from '$lib/utils';
 
 const RequestData = z.object({
   plotId: z.number().int().positive(),
   farmItem: z.number().int().positive(),
 });
+
+const XP = 50;
 
 export const POST = async ({ request }) => {
   const data = await parseRequest(request, RequestData);
@@ -66,5 +68,7 @@ export const POST = async ({ request }) => {
     });
   }
 
+  giveXP(EMPTY_UUID, XP);
+  
   return json({ crop });
 }

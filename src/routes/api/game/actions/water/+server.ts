@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/db';
-import { getPlotWithCrop, parseRequest } from '$lib/utils';
+import { getPlotWithCrop, giveXP, parseRequest } from '$lib/utils';
+import { EMPTY_UUID } from '$lib/helpers';
 
 const RequestData = z.object({
   plotId: z.number().int().positive(),
@@ -9,6 +10,8 @@ const RequestData = z.object({
 
 const WATER_DURATION = 1000;
 const WATER_REDUCE_MS = 2500;
+
+const XP = 20;
 
 export const POST = async ({ request }) => {
   const data = await parseRequest(request, RequestData);
@@ -25,6 +28,8 @@ export const POST = async ({ request }) => {
     }
   });
   if (!wateredCrop) throw error(500, 'crop not updated');
+  
+  giveXP(EMPTY_UUID, XP);
 
   return json({ crop: wateredCrop });
 }

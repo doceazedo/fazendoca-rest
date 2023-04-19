@@ -18,6 +18,7 @@ model User {
   createdAt    DateTime @default(now())
   farm         Farm?
   shop         Shop?
+  xp           Int @default(1)
 }
 
 model Farm {

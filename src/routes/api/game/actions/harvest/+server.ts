@@ -1,11 +1,14 @@
 import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/db';
-import { getPlotWithCrop, giveItems, parseRequest } from '$lib/utils';
+import { getPlotWithCrop, giveItems, giveXP, parseRequest } from '$lib/utils';
+import { EMPTY_UUID } from '$lib/helpers';
 
 const RequestData = z.object({
   plotId: z.number().int().positive(),
 });
+
+const XP = 100;
 
 export const POST = async ({ request }) => {
   const data = await parseRequest(request, RequestData);
@@ -36,6 +39,8 @@ export const POST = async ({ request }) => {
     farmId: plot.farmId
   });
   if (!farmItem) throw error(500, 'loot was not given');
+
+  giveXP(EMPTY_UUID, XP);
 
   return json({ farmItem });
 }
