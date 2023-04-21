@@ -5,6 +5,7 @@ export const parseData  = async <T extends ZodRawShape>(payload: unknown, schema
   const parsedData = schema.safeParse(payload);
 
   if (!parsedData.success) {
+    console.log({ error: parsedData.error })
     const errorMessages = parsedData.error.issues.map(issue => issue.message).join('. ');
     throw error(400, errorMessages);
   }

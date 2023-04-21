@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { error, json } from '@sveltejs/kit';
 import { prisma } from '$lib/db';
 import { EMPTY_UUID } from '$lib/helpers';
-import { giveXP, parseRequest } from '$lib/utils';
+import { giveXP, parseRequest, removeItems } from '$lib/utils';
 
 const RequestData = z.object({
   plotId: z.number().int().positive(),
@@ -51,24 +51,8 @@ export const POST = async ({ request }) => {
   });
   if (!crop) throw error(500, 'crop not created');
 
-  if (farmItem.quantity <= 1) {
-    await prisma.farmItem.delete({
-      where: {
-        id: farmItem.id
-      }
-    });
-  } else {
-    await prisma.farmItem.update({
-      where: {
-        id: farmItem.id
-      },
-      data: {
-        quantity: farmItem.quantity - 1
-      }
-    });
-  }
-
-  giveXP(EMPTY_UUID, XP);
+  await removeItems(farmItem, 1);
+  await giveXP(EMPTY_UUID, XP);
   
   return json({ crop });
 }
