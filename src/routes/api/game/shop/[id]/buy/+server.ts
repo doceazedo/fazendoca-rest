@@ -40,9 +40,9 @@ export const POST = async ({ request }) => {
   if (!farm) throw error(404, 'farm not found');
   if (farm.ownerId !== EMPTY_UUID) throw error(401, 'not your farm');
 
-  let playerWasCharged = false;
+  let chargedPlayer = null;
   if (data.currency == 'REGULAR') {
-    playerWasCharged = await chargePlayer(
+    chargedPlayer = await chargePlayer(
       player.id,
       player.balRegular,
       data.quantity,
@@ -50,7 +50,7 @@ export const POST = async ({ request }) => {
       false
     );
   } else if (data.currency == 'PREMIUM') {
-    playerWasCharged = await chargePlayer(
+    chargedPlayer = await chargePlayer(
       player.id,
       player.balRegular,
       data.quantity,
@@ -58,7 +58,7 @@ export const POST = async ({ request }) => {
       true
     );
   }
-  if (!playerWasCharged) throw error(500, 'could not charge player');
+  if (!chargedPlayer) throw error(500, 'could not charge player');
 
   const farmItem = await giveItems({
     itemId: shopItem.itemId,
@@ -68,7 +68,11 @@ export const POST = async ({ request }) => {
   });
   if (!farmItem) throw error(500, 'item was not given');
 
-  return json({ farmItem });
+  return json({
+    farmItem,
+    balRegular: chargedPlayer.balRegular,
+    balPremium: chargedPlayer.balPremium
+  });
 }
 
 const chargePlayer = async (
@@ -81,8 +85,8 @@ const chargePlayer = async (
   if (!price) throw error(400, 'cannot buy item with this currency');
   if (balance < price * quantity) throw error(400, 'not enough money');
 
-  const updatedBalance = balance - price
-  const updatedPlayer = prisma.user.update({
+  const updatedBalance = balance - price * quantity;
+  const updatedPlayer = await prisma.user.update({
     where: {
       id: playerId
     },
@@ -93,5 +97,5 @@ const chargePlayer = async (
   });
   if (!updatedPlayer) throw error(500, 'could not update player balance');
 
-  return true;
+  return updatedPlayer;
 }
