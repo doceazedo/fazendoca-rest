@@ -58,11 +58,12 @@ const main = async () => {
 
   await prisma.shop.upsert({
     where: {
-      id: DEFAULT_SHOP_ID
+      id: 'GARDENING_SHOP'
     },
     update: {},
     create: {
-      id: DEFAULT_SHOP_ID,
+      id: 'GARDENING_SHOP',
+      categories: ['SEED', 'PRODUCT', 'TOOL'],
       items: {
         create: {
           itemId: RADISH_SEED_SLUG,

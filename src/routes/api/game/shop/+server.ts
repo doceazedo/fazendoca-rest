@@ -6,7 +6,11 @@ export const GET = async () => {
   const shops = await prisma.shop.findMany({
     where: {
       farmId: null
+    },
+    select: {
+      id: true
     }
   });
-  return json({ shops });
+  const shopIDs = shops.map(shop => shop.id);
+  return json({ shops: shopIDs });
 }

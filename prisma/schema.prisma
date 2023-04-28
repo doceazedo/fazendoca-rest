@@ -73,10 +73,11 @@ model Crop {
 }
 
 model Shop {
-  id      String      @id @default(uuid())
-  farmId  String?     @unique
-  farm    Farm?       @relation(fields: [farmId], references: [id])
-  items   ShopItems[]
+  id         String      @id @default(uuid())
+  farmId     String?     @unique
+  farm       Farm?       @relation(fields: [farmId], references: [id])
+  categories ItemType[]
+  items      ShopItems[]
 }
 
 model ShopItems {
@@ -92,4 +93,6 @@ model ShopItems {
 enum ItemType {
   SEED
   PLANT
+  PRODUCT
+  TOOL
 }
